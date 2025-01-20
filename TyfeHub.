@@ -145,7 +145,7 @@ local Input = MainTab:CreateInput({
 })
 
 local Button = OthersTab:CreateButton({
-   Name = "Fling Yourself (F Key)",
+   Name = "Fling Yourself",
    Callback = function()
   -- LocalScript to fling the player
 
