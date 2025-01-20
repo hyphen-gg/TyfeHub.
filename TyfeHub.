@@ -143,3 +143,34 @@ local Input = MainTab:CreateInput({
         game.Players.LocalPlayer.Character.Humanoid.JumpPower = (Text)
    end,
 })
+
+local Button = OthersTab:CreateButton({
+   Name = "Fling Yourself (F Key)",
+   Callback = function()
+  -- LocalScript to fling the player
+
+local player = game.Players.LocalPlayer
+local userInputService = game:GetService("UserInputService")
+local flingKey = Enum.KeyCode.F  -- Set the key to fling the player (F key in this case)
+
+-- Function to fling the player
+local function flingPlayer()
+    local character = player.Character
+    if not character or not character:FindFirstChild("HumanoidRootPart") then return end
+
+    local humanoidRootPart = character.HumanoidRootPart
+    local velocity = Vector3.new(math.random(-500, 500), 500, math.random(-500, 500)) -- Random fling direction
+
+    -- Apply a body velocity to fling the player
+    local bodyVelocity = Instance.new("BodyVelocity")
+    bodyVelocity.MaxForce = Vector3.new(100000, 100000, 100000)  -- Strong force
+    bodyVelocity.Velocity = velocity
+    bodyVelocity.Parent = humanoidRootPart
+
+    -- Remove the BodyVelocity after 0.5 seconds to stop the fling effect
+    game.Debris:AddItem(bodyVelocity, 0.5)
+end
+            flingPlayer()
+
+   end,
+})
