@@ -181,3 +181,17 @@ local Button = MainTab:CreateButton({
   loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
    end,
 })
+
+local Button = OthersTab:CreateButton({
+   Name = "Kill All",
+   Callback = function()
+   -- Kill everyone in the server
+for _, player in pairs(game.Players:GetPlayers()) do
+    -- Check if the player character exists before attempting to kill
+    if player.Character and player.Character:FindFirstChild("Humanoid") then
+        player.Character.Humanoid.Health = 0
+    end
+end
+
+   end,
+})
