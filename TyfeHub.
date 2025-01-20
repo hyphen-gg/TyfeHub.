@@ -156,11 +156,14 @@ local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
 
 -- Settings for rotation speed
-local spinSpeed = 5  -- The speed of rotation, higher values make it spin faster
+local spinSpeed = 100  -- The speed of rotation, higher values make it spin faster
 
 -- A boolean variable to control whether the player spins
 local isSpinning = true  -- Set this to 'true' to start spinning, 'false' to stop
-
+if isSpinning == true then
+    CurrentValue = true
+     else
+    CurrentValue = false
 -- Function to make the player spin
 local function spinPlayer()
     while true do
@@ -169,6 +172,7 @@ local function spinPlayer()
             character:SetPrimaryPartCFrame(character.PrimaryPart.CFrame * CFrame.Angles(0, math.rad(spinSpeed), 0))
         end
         wait(0.03)  -- Small delay to keep the spin smooth
+        end
     end
 end
 
