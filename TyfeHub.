@@ -1,0 +1,145 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "Player Speed & JP Script",
+   Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
+   LoadingTitle = "Tyfe Hub",
+   LoadingSubtitle = "By kenvstar",
+   Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
+
+   DisableRayfieldPrompts = false,
+   DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
+
+   ConfigurationSaving = {
+      Enabled = false,
+      FolderName = nil, -- Create a custom folder for your hub/game
+      FileName = "Tyfe Hub"
+   },
+
+   Discord = {
+      Enabled = true, -- Prompt the user to join your Discord server if their executor supports it
+      Invite = "https://discord.gg/eEE9z3YgHf", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
+      RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+   },
+
+   KeySystem = true, -- Set this to true to use our key system
+   KeySettings = {
+      Title = "Player Gravity & Speed | Key System",
+      Subtitle = "Key system",
+      Note = "Join the Discord Server to obtain the key.", -- Use this to tell the user how to get a key
+      FileName = "tyfehubkey", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+      SaveKey = false, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+      GrabKeyFromSite = true, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+      Key = {"https://pastebin.com/raw/ckz0MY30"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+   }
+})
+
+local MainTab = Window:CreateTab("Home", nil) -- Title, Image
+local MainSection = MainTab:CreateSection("Main")
+
+Rayfield:Notify({
+   Title = "Script Executed",
+   Content = "You have executed the script and the script should be up and running.",
+   Duration = 5,
+   Image = nil,
+})
+
+local Button = MainTab:CreateButton({
+   Name = "Infinite Jump",
+   Callback = function()
+   _G.infinjump = not _G.infinjump
+ 
+if _G.infinJumpStarted == nil then
+    --Ensures this only runs once to save resources
+    _G.infinJumpStarted = true
+    
+    --Notifies readiness
+    game.StarterGui:SetCore("SendNotification", {Title="TyfeHub"; Text="TyfeHub infinite jump activated."; Duration=5;})
+ 
+    --The actual infinite jump
+    local plr = game:GetService('Players').LocalPlayer
+    local m = plr:GetMouse()
+    m.KeyDown:connect(function(k)
+        if _G.infinjump then
+            if k:byte() == 32 then
+            humanoid = game:GetService'Players'.LocalPlayer.Character:FindFirstChildOfClass('Humanoid')
+            humanoid:ChangeState('Jumping')
+            wait()
+            humanoid:ChangeState('Seated')
+            end
+        end
+    end)
+end
+   end,
+})
+
+local Slider = MainTab:CreateSlider({
+   Name = "Player WalkSpeed",
+   Range = {0, 300},
+   Increment = 1,
+   Suffix = "Speed",
+   CurrentValue = 16,
+   Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = (Value)
+   end,
+})
+
+local OthersTab = Window:CreateTab("Misc", 4483362458) -- Title, Image
+local Section = OthersTab:CreateSection("Other")
+
+local Button = OthersTab:CreateButton({
+   Name = "Click to Teleport (Press the T key to activate on and off)",
+   Callback = function()
+   -- LocalScript to teleport player to mouse click position with toggle
+
+local player = game.Players.LocalPlayer
+local mouse = player:GetMouse()
+
+local teleportEnabled = false  -- Variable to track if teleportation is enabled
+
+-- Function to teleport player to clicked location
+local function teleportToClickPosition()
+    if teleportEnabled then
+        local targetPosition = mouse.Hit.Position
+        player.Character:SetPrimaryPartCFrame(CFrame.new(targetPosition))
+    end
+end
+
+-- Function to toggle teleportation on or off
+local function toggleTeleport()
+    teleportEnabled = not teleportEnabled
+    if teleportEnabled then
+        print("Teleportation enabled!")
+    else
+        print("Teleportation disabled.")
+    end
+end
+
+-- Listen for mouse click event
+mouse.Button1Down:Connect(function()
+    teleportToClickPosition()
+end)
+
+-- Listen for key press (T key to toggle)
+game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end  -- Ignore if input is being used by the game (like the chat)
+    
+    if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == Enum.KeyCode.T then
+        toggleTeleport()  -- Toggle teleport on 'T' key press
+    end
+end)
+
+   end,
+})
+
+local Input = MainTab:CreateInput({
+   Name = "JumpPower",
+   CurrentValue = "",
+   PlaceholderText = "1-200",
+   RemoveTextAfterFocusLost = true,
+   Flag = "Input1",
+   Callback = function(Text)
+        game.Players.LocalPlayer.Character.Humanoid.JumpPower = (Text)
+   end,
+})
