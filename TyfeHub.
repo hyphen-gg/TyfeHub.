@@ -174,3 +174,64 @@ end
 
    end,
 })
+
+local Button = MainTab:CreateButton({
+   Name = "Fling Spin (Touch another player while spinning)",
+   Callback = function()
+   -- LocalScript to make the player spin and fling other players on touch
+
+local player = game.Players.LocalPlayer
+local userInputService = game:GetService("UserInputService")
+local spinSpeed = 10 -- How fast the player spins (can adjust this value)
+
+-- Function to make the player spin
+local function spinPlayer()
+    local character = player.Character
+    if not character or not character:FindFirstChild("HumanoidRootPart") then return end
+    
+    local humanoidRootPart = character.HumanoidRootPart
+    while true do
+        -- Spin the player around their Y-axis
+        humanoidRootPart.CFrame = humanoidRootPart.CFrame * CFrame.Angles(0, math.rad(spinSpeed), 0)
+        wait(0.01)  -- Adjust wait time to control the smoothness of the spin
+    end
+end
+
+-- Function to fling another player when touched
+local function flingOtherPlayer(otherPlayer)
+    if otherPlayer and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        local targetHumanoidRootPart = otherPlayer.Character.HumanoidRootPart
+        
+        -- Apply a random fling force
+        local velocity = Vector3.new(math.random(-500, 500), 500, math.random(-500, 500))
+        
+        -- Create a BodyVelocity to apply force
+        local bodyVelocity = Instance.new("BodyVelocity")
+        bodyVelocity.MaxForce = Vector3.new(100000, 100000, 100000)  -- Apply strong force
+        bodyVelocity.Velocity = velocity
+        bodyVelocity.Parent = targetHumanoidRootPart
+        
+        -- Clean up the BodyVelocity after 0.5 seconds
+        game.Debris:AddItem(bodyVelocity, 0.5)
+    end
+end
+
+-- Function to handle touch event
+local function onTouch(otherPart)
+    local otherPlayer = game.Players:GetPlayerFromCharacter(otherPart.Parent)
+    if otherPlayer and otherPlayer ~= player then
+        flingOtherPlayer(otherPlayer)
+    end
+end
+
+-- Start spinning the player
+spawn(spinPlayer)
+
+-- Connect the touch event to the player's character
+local character = player.Character
+if character and character:FindFirstChild("HumanoidRootPart") then
+    character.HumanoidRootPart.Touched:Connect(onTouch)
+end
+
+   end,
+})
