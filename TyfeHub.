@@ -144,43 +144,48 @@ local Input = MainTab:CreateInput({
    end,
 })
 
-local Toggle = MainTab:CreateToggle({
-   Name = "Spin",
-   CurrentValue = false,
-   Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-   Callback = function(Value)
--- LocalScript
+local Button = MainTab:CreateButton({
+   Name = "NoClip (N to turn on and off)",
+   Callback = function()
+   -- LocalScript
 
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
+local isNoClipping = false
 
--- Settings for rotation speed
-local spinSpeed = 100  -- The speed of rotation, higher values make it spin faster
+-- Toggle the no-clip state with the 'N' key
+local UserInputService = game:GetService("UserInputService")
 
--- A boolean variable to control whether the player spins
-local isSpinning = true  -- Set this to 'true' to start spinning, 'false' to stop
-if isSpinning == true then
-    CurrentValue = true
-     else
-    CurrentValue = false
--- Function to make the player spin
-local function spinPlayer()
-    while true do
-        if isSpinning then
-            -- Rotate the character around the Y-axis
-            character:SetPrimaryPartCFrame(character.PrimaryPart.CFrame * CFrame.Angles(0, math.rad(spinSpeed), 0))
-        end
-        wait(0.03)  -- Small delay to keep the spin smooth
-        end
+-- Function to toggle no-clip mode
+local function toggleNoClip()
+    isNoClipping = not isNoClipping
+    if isNoClipping then
+        -- Enable no-clip: Disable collisions
+        humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+    else
+        -- Disable no-clip: Re-enable collisions
+        humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
     end
 end
 
--- Call the function to start spinning
-spinPlayer()
+-- Function to allow the player to fly through walls while no-clip is active
+local function onUpdate()
+    if isNoClipping then
+        -- Set the player's CFrame to move freely through the world
+        character:SetPrimaryPartCFrame(character.PrimaryPart.CFrame + character.HumanoidRootPart.Velocity * game:GetService("RunService").Heartbeat:Wait())
+    end
+end
 
--- To stop spinning, set isSpinning to false
--- Example: isSpinning = false (You can change this value dynamically based on conditions)
+-- Keybind to toggle no-clip (Press 'N')
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if input.KeyCode == Enum.KeyCode.N and not gameProcessed then
+        toggleNoClip()
+    end
+end)
+
+-- Continuously update the player's movement if in no-clip mode
+game:GetService("RunService").Heartbeat:Connect(onUpdate)
 
    end,
 })
