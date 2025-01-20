@@ -144,101 +144,39 @@ local Input = MainTab:CreateInput({
    end,
 })
 
-local Button = OthersTab:CreateButton({
-   Name = "Fling Yourself",
-   Callback = function()
-  -- LocalScript to fling the player
+local Toggle = MainTab:CreateToggle({
+   Name = "Spin",
+   CurrentValue = false,
+   Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+-- LocalScript
 
 local player = game.Players.LocalPlayer
-local userInputService = game:GetService("UserInputService")
-local flingKey = Enum.KeyCode.F  -- Set the key to fling the player (F key in this case)
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
 
--- Function to fling the player
-local function flingPlayer()
-    local character = player.Character
-    if not character or not character:FindFirstChild("HumanoidRootPart") then return end
+-- Settings for rotation speed
+local spinSpeed = 5  -- The speed of rotation, higher values make it spin faster
 
-    local humanoidRootPart = character.HumanoidRootPart
-    local velocity = Vector3.new(math.random(-500, 500), 500, math.random(-500, 500)) -- Random fling direction
+-- A boolean variable to control whether the player spins
+local isSpinning = true  -- Set this to 'true' to start spinning, 'false' to stop
 
-    -- Apply a body velocity to fling the player
-    local bodyVelocity = Instance.new("BodyVelocity")
-    bodyVelocity.MaxForce = Vector3.new(100000, 100000, 100000)  -- Strong force
-    bodyVelocity.Velocity = velocity
-    bodyVelocity.Parent = humanoidRootPart
-
-    -- Remove the BodyVelocity after 0.5 seconds to stop the fling effect
-    game.Debris:AddItem(bodyVelocity, 0.5)
-end
-            flingPlayer()
-
-   end,
-})
-
-local Button = MainTab:CreateButton({
-   Name = "Fly GUI",
-   Callback = function()
-  loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
-   end,
-})
-
-local Button = OthersTab:CreateButton({
-   Name = "Kill All",
-   Callback = function()
-  -- Function to kill all players in the game and broadcast a message
-local function killAllPlayers()
-    -- Loop through all players in the game
-    for _, player in pairs(game.Players:GetPlayers()) do
-        -- Ensure the player has a character and a Humanoid
-        if player.Character and player.Character:FindFirstChild("Humanoid") then
-            -- Set their health to 0 to kill them
-            player.Character.Humanoid.Health = 0
+-- Function to make the player spin
+local function spinPlayer()
+    while true do
+        if isSpinning then
+            -- Rotate the character around the Y-axis
+            character:SetPrimaryPartCFrame(character.PrimaryPart.CFrame * CFrame.Angles(0, math.rad(spinSpeed), 0))
         end
-    end
-    
-    -- Broadcast a message to all players
-    for _, player in pairs(game.Players:GetPlayers()) do
-        -- Send the message to the player who is running the script
-        game:GetService("Chat"):Chat(player.Character, "All players have been killed!", Enum.ChatColor.Red)
+        wait(0.03)  -- Small delay to keep the spin smooth
     end
 end
 
--- Call the function to kill everyone and show the message
-killAllPlayers()
+-- Call the function to start spinning
+spinPlayer()
 
-
-   end,
-})
-
-local Button = OthersTab:CreateButton({
-   Name = "Teleport all to You",
-   Callback = function()
-       -- Define the player running the script (replace "YourUsername" with your actual username)
-local teleportPlayer = game.Players:WaitForChild("YourUsername") -- Replace with your username
-
--- Function to teleport everyone to the player running the script
-local function teleportAllToPlayer()
-    -- Ensure the target player's character exists
-    if teleportPlayer.Character and teleportPlayer.Character:FindFirstChild("HumanoidRootPart") then
-        -- Broadcast message to all players
-        game:GetService("Chat"):Chat(teleportPlayer.Character, teleportPlayer.Name .. " has teleported everyone to them!", Enum.ChatColor.Red)
-        
-        -- Loop through all players in the game
-        for _, otherPlayer in pairs(game.Players:GetPlayers()) do
-            -- Skip the player who is being teleported to
-            if otherPlayer ~= teleportPlayer then
-                -- Ensure the other player's character exists
-                if otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    -- Teleport the other player to the target player's position
-                    otherPlayer.Character:SetPrimaryPartCFrame(teleportPlayer.Character.HumanoidRootPart.CFrame)
-                end
-            end
-        end
-    end
-end
-
--- Call the function to teleport everyone to the target player
-teleportAllToPlayer()
+-- To stop spinning, set isSpinning to false
+-- Example: isSpinning = false (You can change this value dynamically based on conditions)
 
    end,
 })
