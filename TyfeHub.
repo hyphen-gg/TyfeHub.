@@ -199,28 +199,31 @@ end
 local Button = OthersTab:CreateButton({
    Name = "Teleport all to You",
    Callback = function()
-       -- Define the player running the script (you)
-local player = game.Players.LocalPlayer -- This would be the player running the LocalScript
+       -- Define the player running the script (replace "YourUsername" with your actual username)
+local teleportPlayer = game.Players:WaitForChild("YourUsername") -- Replace with your username
 
 -- Function to teleport everyone to the player running the script
 local function teleportAllToPlayer()
-    -- Ensure the player's character exists
-    if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+    -- Ensure the target player's character exists
+    if teleportPlayer.Character and teleportPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        -- Broadcast message to all players
+        game:GetService("Chat"):Chat(teleportPlayer.Character, teleportPlayer.Name .. " has teleported everyone to them!", Enum.ChatColor.Red)
+        
         -- Loop through all players in the game
         for _, otherPlayer in pairs(game.Players:GetPlayers()) do
-            -- Skip the player running the script
-            if otherPlayer ~= player then
+            -- Skip the player who is being teleported to
+            if otherPlayer ~= teleportPlayer then
                 -- Ensure the other player's character exists
                 if otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    -- Teleport the other player to the player running the script
-                    otherPlayer.Character:SetPrimaryPartCFrame(player.Character.HumanoidRootPart.CFrame)
+                    -- Teleport the other player to the target player's position
+                    otherPlayer.Character:SetPrimaryPartCFrame(teleportPlayer.Character.HumanoidRootPart.CFrame)
                 end
             end
         end
     end
 end
 
--- Call the function to teleport everyone to the player running the script
+-- Call the function to teleport everyone to the target player
 teleportAllToPlayer()
 
    end,
