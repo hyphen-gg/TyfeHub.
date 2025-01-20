@@ -185,13 +185,27 @@ local Button = MainTab:CreateButton({
 local Button = OthersTab:CreateButton({
    Name = "Kill All",
    Callback = function()
-   -- Kill everyone in the server
-for _, player in pairs(game.Players:GetPlayers()) do
-    -- Check if the player character exists before attempting to kill
-    if player.Character and player.Character:FindFirstChild("Humanoid") then
-        player.Character.Humanoid.Health = 0
+  -- Function to kill all players in the game and broadcast a message
+local function killAllPlayers()
+    -- Loop through all players in the game
+    for _, player in pairs(game.Players:GetPlayers()) do
+        -- Ensure the player has a character and a Humanoid
+        if player.Character and player.Character:FindFirstChild("Humanoid") then
+            -- Set their health to 0 to kill them
+            player.Character.Humanoid.Health = 0
+        end
+    end
+    
+    -- Broadcast a message to all players
+    for _, player in pairs(game.Players:GetPlayers()) do
+        -- Send the message to the player who is running the script
+        game:GetService("Chat"):Chat(player.Character, "All players have been killed!", Enum.ChatColor.Red)
     end
 end
+
+-- Call the function to kill everyone and show the message
+killAllPlayers()
+
 
    end,
 })
